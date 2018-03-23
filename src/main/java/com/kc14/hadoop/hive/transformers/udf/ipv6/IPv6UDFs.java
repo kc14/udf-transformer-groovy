@@ -24,11 +24,14 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+import com.kc14.guava.common.net.IDN;
 import com.kc14.hadoop.codec.binary.Hex;
 import com.kc14.hadoop.hive.transformers.udf.common.UDFAdapter;
 import com.kc14.hadoop.hive.transformers.udf.common.UDFPackageIF;
 import com.kc14.janvanbesien.com.googlecode.ipv6.IPv6Address;
 import com.kc14.janvanbesien.com.googlecode.ipv6.IPv6AddressRange;
+
+import crawlercommons.domains.EffectiveTldFinder;
 
 public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 	
@@ -41,6 +44,7 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 
 	private final static String OPTION_IPv6_RANGES = "ipv6-ranges";
 	private final static String OPTION_IPv6_LIST =   "ipv6-list";
+	private final static String OPTION_IPv6_PSL =    "ipv6-psl";
 	
 	private final static String KNOWN_UDFS = "IPv6 Transformation UDFs:\n"
 			+ "   ip\n"
@@ -74,6 +78,16 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 				.required     (false)
 				.build());
 
+		options.addOption(Option.builder()
+				.longOpt      (OPTION_IPv6_PSL)
+				.desc         ("file containing a Public Suffix List (see https://publicsuffix.org)")
+				.required     (false)
+				.hasArg       (true)
+				.argName      ("filename")
+				.numberOfArgs (1)
+				.type         (String.class)
+				.build());
+
 		return options.getOptions();
 
 	}
@@ -84,8 +98,10 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 	public void initFrom(CommandLine commandLine) throws FileNotFoundException, UnsupportedEncodingException, IOException {
 
 		// My Options
-		String networkRangesFilename = null;
-		networkRangesFilename = commandLine.getOptionValue(OPTION_IPv6_RANGES);
+		String networkRangesFilename = commandLine.getOptionValue(OPTION_IPv6_RANGES);
+		String publicSuffixListFilename = commandLine.hasOption(OPTION_IPv6_PSL) ? commandLine.getOptionValue(OPTION_IPv6_PSL) : null;
+		if (publicSuffixListFilename != null) EffectiveTldFinder.getInstance().initialize(new FileInputStream(publicSuffixListFilename));
+
 		
 		if (commandLine.hasOption(OPTION_IPv6_LIST)) {
 			System.err.println(KNOWN_UDFS);
@@ -386,4 +402,7 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 		return Hex.encodeHex(this.getNext(value).toByteArray());
 	}
 	
+	public IDN idn(String domain) {
+		return IDN.from(domain);
+	}
 }
