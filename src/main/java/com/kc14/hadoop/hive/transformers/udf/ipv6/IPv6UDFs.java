@@ -123,8 +123,9 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 		String line = null;
 		ArrayList<String> networkRangeLines = new ArrayList<>(16777216); // 2**24 = 16777216
 		while ((line = in.readLine()) != null) {
-			int endOfRange = line.indexOf('\t', line.indexOf('\t'));
-			String range = endOfRange != -1 ? line.substring(0, endOfRange) : line ;
+			int firstTabPos = line.indexOf('\t');
+			int secondTabPos = firstTabPos != -1 ? line.indexOf('\t', firstTabPos + 1) : -1 ;
+			String range = secondTabPos != -1 ? line.substring(0, secondTabPos) : line ;
 			networkRangeLines.add(range);
 		}
 		in.close();
