@@ -333,19 +333,24 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 	
 	// Implementations
 
-	public IPv6Address getIp(String value) throws UnknownHostException {
-		IPv6Address ipv6Address = null;
+	public IPv6Address getIp(String value) {
+		IPv6Address ip;
 		try {
-			ipv6Address = toIPv6AddressFromStrFurios(value);
+			ip = toIPv6AddressFromStrFurios(value);
 		}
 		catch (UnknownHostException e) {
-			ipv6Address = null;
+			ip = null;
 		}
-		return ipv6Address;
+		return ip;
 	}
 
-	public IPv6Address getStart(String value) throws UnknownHostException {
-		IPv6Address ip = toIPv6AddressFromStr(value);
+	public IPv6Address getStart(String value) {
+		IPv6Address ip;
+		try {
+			ip = toIPv6AddressFromStr(value);
+		} catch (UnknownHostException e) {
+			return null;
+		}
 		int n = findIdxOfGreatest_IPv6AddressRangeFirst_LesserThanOrEqualTo (this.ipv6NetworkRanges, ip);
 		if (n < 0) { // Lower than first range
 			return null;
@@ -356,8 +361,13 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 		}
 	}
 
-	public IPv6Address getLast(String value) throws UnknownHostException {
-		IPv6Address ip = toIPv6AddressFromStr(value);
+	public IPv6Address getLast(String value) {
+		IPv6Address ip;
+		try {
+			ip = toIPv6AddressFromStr(value);
+		} catch (UnknownHostException e) {
+			return null;
+		}
 		int n = findIdxOfGreatest_IPv6AddressRangeFirst_LesserThanOrEqualTo (this.ipv6NetworkRanges, ip);
 		if (n < 0) { // Lower than first range
 			return null;
@@ -367,8 +377,13 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 		}
 	}
 
-	public IPv6Address getNext(String value) throws UnknownHostException {
-		IPv6Address ip = toIPv6AddressFromStr(value);
+	public IPv6Address getNext(String value) {
+		IPv6Address ip;
+		try {
+			ip = toIPv6AddressFromStr(value);
+		} catch (UnknownHostException e) {
+			return null;
+		}
 		int n = findIdxOfGreatest_IPv6AddressRangeFirst_LesserThanOrEqualTo (this.ipv6NetworkRanges, ip);
 		if (n < 0) { // Lower than first range
 			return this.ipv6NetworkRanges.length > 0 ? this.ipv6NetworkRanges[0].getFirst() : null;
@@ -380,42 +395,42 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 	
 	// The dyn UDFs
 	
-	public String ip(String value) throws UnknownHostException {
+	public String ip(String value) {
 		IPv6Address ipv6Address = this.getIp(value);
 		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 
-	public String start(String value) throws UnknownHostException {
+	public String start(String value) {
 		IPv6Address ipv6Address = this.getStart(value);
 		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 
-	public String last(String value) throws UnknownHostException {
+	public String last(String value) {
 		IPv6Address ipv6Address = this.getLast(value);
 		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 
-	public String next(String value) throws UnknownHostException {
+	public String next(String value) {
 		IPv6Address ipv6Address = this.getNext(value);
 		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 	
-	public String iphex(String value) throws UnknownHostException {
+	public String iphex(String value) {
 		IPv6Address ipv6Address = this.getIp(value);
 		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
 
-	public String starthex(String value) throws UnknownHostException {
+	public String starthex(String value) {
 		IPv6Address ipv6Address = this.getStart(value);
 		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
 
-	public String lasthex(String value) throws UnknownHostException {
+	public String lasthex(String value) {
 		IPv6Address ipv6Address = this.getLast(value);
 		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
 
-	public String nexthex(String value) throws UnknownHostException {
+	public String nexthex(String value) {
 		IPv6Address ipv6Address = this.getNext(value);
 		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
