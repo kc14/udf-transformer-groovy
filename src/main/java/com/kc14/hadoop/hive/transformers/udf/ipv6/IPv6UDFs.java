@@ -334,7 +334,14 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 	// Implementations
 
 	public IPv6Address getIp(String value) throws UnknownHostException {
-		return toIPv6AddressFromStrFurios(value);
+		IPv6Address ipv6Address = null;
+		try {
+			ipv6Address = toIPv6AddressFromStrFurios(value);
+		}
+		catch (UnknownHostException e) {
+			ipv6Address = null;
+		}
+		return ipv6Address;
 	}
 
 	public IPv6Address getStart(String value) throws UnknownHostException {
@@ -374,35 +381,43 @@ public class IPv6UDFs extends UDFAdapter implements UDFPackageIF {
 	// The dyn UDFs
 	
 	public String ip(String value) throws UnknownHostException {
-		return this.getIp(value).toShortString();
+		IPv6Address ipv6Address = this.getIp(value);
+		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 
 	public String start(String value) throws UnknownHostException {
-		return this.getStart(value).toShortString();
+		IPv6Address ipv6Address = this.getStart(value);
+		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 
 	public String last(String value) throws UnknownHostException {
-		return this.getLast(value).toShortString();
+		IPv6Address ipv6Address = this.getLast(value);
+		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 
 	public String next(String value) throws UnknownHostException {
-		return this.getNext(value).toShortString();
+		IPv6Address ipv6Address = this.getNext(value);
+		return ipv6Address != null ? ipv6Address.toShortString() : null;
 	}
 	
 	public String iphex(String value) throws UnknownHostException {
-		return Hex.encodeHex(this.getIp(value).toByteArray());
+		IPv6Address ipv6Address = this.getIp(value);
+		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
 
 	public String starthex(String value) throws UnknownHostException {
-		return Hex.encodeHex(this.getStart(value).toByteArray());
+		IPv6Address ipv6Address = this.getStart(value);
+		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
 
 	public String lasthex(String value) throws UnknownHostException {
-		return Hex.encodeHex(this.getLast(value).toByteArray());
+		IPv6Address ipv6Address = this.getLast(value);
+		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
 
 	public String nexthex(String value) throws UnknownHostException {
-		return Hex.encodeHex(this.getNext(value).toByteArray());
+		IPv6Address ipv6Address = this.getNext(value);
+		return ipv6Address != null ? Hex.encodeHex(ipv6Address.toByteArray()) : null ;
 	}
 	
 	public IDN idn(String domain) {
